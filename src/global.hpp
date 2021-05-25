@@ -8,7 +8,7 @@ using namespace std;
 #define BiasMax 1
 #define WeightMin -1
 #define WeightMax 1
-#define FoodTimeout 60
+#define FoodTimeout 40
 
 extern mt19937 randGen;
 bool rb(int chance);

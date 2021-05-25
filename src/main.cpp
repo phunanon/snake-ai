@@ -13,6 +13,7 @@ using namespace std;
 void save();
 void restore();
 Snake snakes[numSnakes];
+bool doDisplay = false;
 
 int main()
 {
@@ -34,11 +35,18 @@ int main()
 			if (event.type == sf::Event::Closed) {
 				window.close();
 			}
+			if (event.type == sf::Event::KeyReleased) {
+				if (event.key.code == sf::Keyboard::D) {
+					doDisplay = !doDisplay;
+				}
+			}
 		}
 		auto sleepUntil = chrono::system_clock::now() + chrono::milliseconds(100);
 
-//display.draw(window, snakes[s]);
-//this_thread::sleep_until(sleepUntil);
+		if (doDisplay) {
+			display.draw(window, snakes[s]);
+			this_thread::sleep_until(sleepUntil);
+		}
 
 		if (!snakes[s].next()) {
 			bestAge = max(snakes[s].age, bestAge);
@@ -46,7 +54,7 @@ int main()
 			genAgeSum += snakes[s].age;
 			genAteSum += snakes[s].ate;
 
-			if ((gen % 100) == 0 && s == numSnakes - 1) {
+			if (gen >= 100 && (gen % 100) == 0 && s == numSnakes - 1) {
 				printf(
 					"#%d %d/%d\tage %.2f\teat %.2f\n",
 					gen,
@@ -56,6 +64,7 @@ int main()
 					float(genAteSum) / numSnakes);
 				display.draw(window, snakes[s]);
 				this_thread::sleep_until(sleepUntil);
+				save();
 			}
 
 			if (++s == numSnakes) {
@@ -69,10 +78,10 @@ int main()
 					else {
 						snakes[i] = snakes[i + 1].mutant();
 					}
-					snakes[i].reset();
-					snakes[i + 1].reset();
 				}
-				save();
+				for (int i = 0; i < numSnakes; ++i) {
+					snakes[i].reset();
+				}
 			}
 		}
 	}
@@ -80,23 +89,33 @@ int main()
 
 void save()
 {
+	for (int i = 0; i < numSnakes; ++i) {
+		snakes[i].reset();
+	}
+	
 	fstream file;
 	file.open("save.ai", ios::out | ios::binary);
-	file.write((char*)&snakes, sizeof(snakes));
+	//for (int i = 0; i < numSnakes; ++i) {
+	//	file.write((char*)&snakes[i].brain, sizeof(snakes[i].brain));
+	//}
+    file.write((char*)&snakes, sizeof(snakes));
 	file.write((char*)&randGen, sizeof(randGen));
 	file.close();
 }
 
 void restore()
 {
+	for (int i = 0; i < numSnakes; ++i) {
+		snakes[i].reset();
+		snakes[i] = snakes[i].mutant();
+	}
+
 	fstream file;
 	file.open("save.ai", ios::in | ios::binary);
-	if (!file) {
-		for (int i = 0; i < numSnakes; ++i) {
-			snakes[i] = snakes[i].mutant();
-		}
-	}
-	else {
+	if (file) {
+		//for (int i = 0; i < numSnakes; ++i) {
+		//	file.read((char*)&snakes[i].brain, sizeof(snakes[i].brain));
+		//}
 		file.read((char*)&snakes, sizeof(snakes));
 		file.read((char*)&randGen, sizeof(randGen));
 		file.close();

@@ -19,4 +19,4 @@ add_executable(${EXECUTABLE_NAME} main.cpp global.cpp Display.cpp Brain.cpp Snak
 target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES} ${SFML_DEPENDENCIES})
 
 add_definitions("-g")
-add_definitions("-Wall -O3")
+#add_definitions("-Wall -O3")

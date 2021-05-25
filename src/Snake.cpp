@@ -8,7 +8,7 @@ Snake::Snake()
 
 void Snake::newFood()
 {
-    _foodTimeout = FoodTimeout;
+    foodTimeout = FoodTimeout;
     food.x = _rand() % width;
     food.y = _rand() % height;
 }
@@ -26,7 +26,7 @@ Vec4 cardinalDistances(float x0, float y0, float x1, float y1, float width, floa
     };
 }
 
-Inputs<12> Snake::makeInputs()
+Inputs<16> Snake::makeInputs()
 {
     auto wallNorth = float(_head.y) / height;
     auto wallSouth = 1 - wallNorth;
@@ -50,6 +50,10 @@ Inputs<12> Snake::makeInputs()
             tailDists.b,
             tailDists.c,
             tailDists.d,
+            _prevDir[0],
+            _prevDir[1],
+            _prevDir[2],
+            _prevDir[3],
         }
     };
 }
@@ -57,24 +61,29 @@ Inputs<12> Snake::makeInputs()
 bool Snake::next()
 {
     ++age;
-    --_foodTimeout;
+    --foodTimeout;
     auto outputs = _brain.next(makeInputs());
-    auto [o] = outputs;
-    auto [north, east, south, west] = o;
+    auto [north, east, south, west] = outputs.output;
 
     auto most = max(max(north, east), max(south, west));
 
+    memset(_prevDir, 0, sizeof(_prevDir));
+
     if (most == north) {
         --_head.y;
+        _prevDir[0] = 1;
     }
     else if (most == east) {
         ++_head.x;
+        _prevDir[1] = 1;
     }
     else if (most == south) {
         ++_head.y;
+        _prevDir[2] = 1;
     }
     else if (most == west) {
         --_head.x;
+        _prevDir[3] = 1;
     }
 
     if (_head.y < 0
@@ -82,7 +91,7 @@ bool Snake::next()
         || _head.y >= height
         || _head.x >= width
         || body[_head.y][_head.x]
-        || !_foodTimeout) {
+        || !foodTimeout) {
         return false;
     }
 
@@ -109,6 +118,6 @@ Snake Snake::mutant()
 {
     auto newSnake = Snake();
     newSnake._brain = _brain.mutant();
-    newSnake.age = 0;
+    newSnake.reset();
     return newSnake;
 }
