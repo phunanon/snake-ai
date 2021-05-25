@@ -39,7 +39,10 @@ void Display::draw(RenderWindow& window, Snake& snake, int gen, int s)
                 continue;
             }
             rectShape.setPosition(x, y);
-            rectShape.setFillColor(Color(100, snake.body[y][x] * 10, 50));
+            rectShape.setFillColor(Color(
+                (snake.body[y][x] * 2 + 0) / 3,
+                (snake.body[y][x] * 3 + 1) / 3,
+                (snake.body[y][x] * 2 + 2) / 3));
             window.draw(rectShape, transform);
         }
     }

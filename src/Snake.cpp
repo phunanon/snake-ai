@@ -32,10 +32,10 @@ Inputs<16> Snake::makeInputs()
 
     return {
         .inputs = {
-            float(head.y < 1), //Wall immediately North
-            float(head.x < 1), //Wall immediately West
-            float(head.y > height - 1), //Wall immediately South
-            float(head.x > width - 1),  //Wall immediately East
+            float(!head.y), //Wall immediately North
+            float(!head.x), //Wall immediately West
+            float(head.y == height - 1), //Wall immediately South
+            float(head.x == width - 1),  //Wall immediately East
             float(head.x == food.x && head.y > food.y), //Food North
             float(head.x == food.x && head.y < food.y), //Food South
             float(head.y == food.y && head.x > food.x), //Food East
@@ -74,7 +74,8 @@ bool Snake::next()
         || head.x < 0
         || head.y >= height
         || head.x >= width
-        //|| body[head.y][head.x]
+        //|| body[head.y][head.x] //
+        || ate > 1000             // TODO
         || !foodTimeout) {
         return false;
     }
