@@ -26,29 +26,36 @@ Display::Display()
     text.setPosition(0, boardHeight);
 }
 
-void Display::draw(RenderWindow& window, Snake& snake)
+void Display::draw(RenderWindow& window, Snake& snake, int gen, int s)
 {
     auto transform = Transform()
         .translate(borderThickness, borderThickness)
         .scale(boardWidth / snake.width, boardHeight / snake.height);
     window.clear(Color(100, 100, 100));
 
-    rectShape.setFillColor(Color(100, 250, 50));
     for (int y = 0; y < snake.height; ++y) {
         for (int x = 0; x < snake.width; ++x) {
             if (!snake.body[y][x]) {
                 continue;
             }
             rectShape.setPosition(x, y);
+            rectShape.setFillColor(Color(100, snake.body[y][x] * 10, 50));
             window.draw(rectShape, transform);
         }
     }
     rectShape.setFillColor(Color(250, 50, 100));
     rectShape.setPosition(snake.food.x, snake.food.y);
     window.draw(rectShape, transform);
+    rectShape.setFillColor(Color(100, 200, 50));
+    rectShape.setPosition(snake.head.x, snake.head.y);
+    window.draw(rectShape, transform);
 
     auto foodTimeout = to_string(snake.foodTimeout);
-    text.setString("Timeout: " + foodTimeout);
+    text.setString(
+        to_string(gen) + ":" + to_string(s) +
+        "\nAge: " + to_string(snake.age) +
+        "\nAte: " + to_string(snake.ate) +
+        "\nTimeout: " + foodTimeout);
     window.draw(text);
 
     window.draw(boardShape);

@@ -2,13 +2,14 @@
 #include <random>
 using namespace std;
 
-#define BiasMutateChance 3
-#define WeightMutateChance 3
+#define BiasMutateChance 5
+#define WeightMutateChance 5
 #define BiasMin 0
 #define BiasMax 1
 #define WeightMin -1
 #define WeightMax 1
-#define FoodTimeout 40
+#define FoodTimeout 50
+#define CheckpointDuration 3
 
 extern mt19937 randGen;
 bool rb(int chance);

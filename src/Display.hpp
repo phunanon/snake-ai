@@ -6,5 +6,5 @@ class Display
 {
 public:
     Display();
-    void draw(sf::RenderWindow&, Snake&);
+    void draw(sf::RenderWindow&, Snake&, int, int);
 };

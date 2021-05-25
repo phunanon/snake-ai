@@ -21,18 +21,15 @@ struct Vec4
 
 class Snake
 {
-    Brain<16, 16, 4> _brain;
     Inputs<16> makeInputs();
-    Vec2 _head = { .x = width / 2, .y = height / 2 };
-    Vec2 _tail = _head;
-    uint16_t _length = 2;
     mt19937 _rand;
-    float _prevDir[4] = {0};
     void newFood();
 
 public:
     static const uint8_t width = 8;
     static const uint8_t height = 8;
+    Brain<16, 16, 4> brain;
+    Vec2 head = { .x = width / 2, .y = height / 2 };
     Vec2 food;
     uint8_t foodTimeout = 0;
     uint32_t age = 0;
@@ -43,8 +40,8 @@ public:
     Snake mutant();
     void reset()
     {
-        _length = 2;
         _rand = mt19937(1);
+        head = { .x = width / 2, .y = height / 2 };
         age = 0;
         ate = 0;
         memset(body, 0, sizeof(body));
