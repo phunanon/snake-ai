@@ -1,8 +1,8 @@
 #include "Display.hpp"
 using namespace sf;
 
-#define boardWidth 640
-#define boardHeight 640
+#define boardWidth 500
+#define boardHeight 500
 #define borderThickness 4
 
 RectangleShape boardShape = RectangleShape();
@@ -12,22 +12,22 @@ sf::Font font;
 
 Display::Display()
 {
-    boardShape.setPosition(borderThickness, borderThickness);
-    boardShape.setSize(Vector2f(boardWidth, boardHeight));
-    boardShape.setOutlineThickness(borderThickness);
-    boardShape.setOutlineColor(sf::Color(250, 150, 100));
+    boardShape.setSize(Vector2f(boardWidth + borderThickness, boardHeight + borderThickness));
+    boardShape.setOutlineThickness(-borderThickness);
+    boardShape.setOutlineColor(Color(250, 150, 100));
     boardShape.setFillColor(Color(0, 0, 0, 0));
-    if (!font.loadFromFile("../arial.ttf"))
-    {
+    if (!font.loadFromFile("../arial.ttf")) {
         font.loadFromFile("arial.ttf");
     }
     text.setFillColor(Color(255, 255, 255));
     text.setFont(font);
-    text.setPosition(0, boardHeight);
+    text.setCharacterSize(15.0f);
+    text.setPosition(boardWidth + 15, 15);
 }
 
 void Display::draw(RenderWindow& window, Snake& snake, int gen, int s)
 {
+    rectShape.setSize(Vector2f(1, 1));
     auto transform = Transform()
         .translate(borderThickness, borderThickness)
         .scale(boardWidth / snake.width, boardHeight / snake.height);
@@ -39,17 +39,15 @@ void Display::draw(RenderWindow& window, Snake& snake, int gen, int s)
                 continue;
             }
             rectShape.setPosition(x, y);
-            rectShape.setFillColor(Color(
-                (snake.body[y][x] * 2 + 0) / 3,
-                (snake.body[y][x] * 3 + 1) / 3,
-                (snake.body[y][x] * 2 + 2) / 3));
+            rectShape.setFillColor(Color(0, float(snake.body[y][x]) / (snake.ate + 2) * 255, 0));
             window.draw(rectShape, transform);
         }
     }
+
     rectShape.setFillColor(Color(250, 50, 100));
     rectShape.setPosition(snake.food.x, snake.food.y);
     window.draw(rectShape, transform);
-    rectShape.setFillColor(Color(100, 200, 50));
+    rectShape.setFillColor(Color(0, 255, 0));
     rectShape.setPosition(snake.head.x, snake.head.y);
     window.draw(rectShape, transform);
 
@@ -62,5 +60,38 @@ void Display::draw(RenderWindow& window, Snake& snake, int gen, int s)
     window.draw(text);
 
     window.draw(boardShape);
+    draw(window, snake.brain);
     window.display();
+}
+
+
+
+#define NeuronSize 10
+
+
+template <int NumConnect, int Count>
+void drawLayer(Layer<NumConnect, Count> layer, RenderWindow& window, int x, int y)
+{
+    for (int n = 0; n < Count; ++n) {
+        auto r = layer.neurons[n].result;
+        rectShape.setFillColor(Color(
+            r < 0 ? r * -255 : 0,
+            r > 0 ? r * 255 : 0,
+            0));
+        rectShape.setPosition(x, y + (n * NeuronSize * 1.5));
+        window.draw(rectShape);
+    }
+}
+
+
+void Display::draw(RenderWindow& window, Brain<16, 16, 4>& brain)
+{
+    int x = boardWidth + (borderThickness * 4), y = 100;
+
+    rectShape.setSize(Vector2f(NeuronSize, NeuronSize));
+
+    drawLayer<0, 16>(brain.InputLayer, window, x, y);
+    drawLayer<16, 16>(brain.HiddenLayerA, window, x + (NeuronSize * 1.5), y);
+    drawLayer<16, 16>(brain.HiddenLayerB, window, x + (NeuronSize * 3), y);
+    drawLayer<16, 4>(brain.OutputLayer, window, x + (NeuronSize * 4.5), y);
 }

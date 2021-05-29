@@ -6,8 +6,8 @@
 #include "Snake.hpp"
 using namespace std;
 
-#define WIN_W 800
-#define WIN_H 800
+#define WIN_W 625
+#define WIN_H 504
 #define numSnakes 1000
 
 void nextGeneration();
@@ -42,12 +42,15 @@ int main()
 			if (event.type == sf::Event::KeyReleased) {
 				if (event.key.code == sf::Keyboard::D) {
 					bestAteShown = 0;
-				} else if (event.key.code == sf::Keyboard::S) {
+				}
+				else if (event.key.code == sf::Keyboard::S) {
 					bestAteShown = bestAte;
 				}
 			}
 		}
-		auto sleepUntil = chrono::system_clock::now() + chrono::milliseconds(50);
+		auto sleepUntil = chrono::system_clock::now() + chrono::milliseconds(20);
+
+		bool died = !snakes[s].next();
 
 		bool doDisplay = !s && bestAteShown != bestAte;
 		if (doDisplay) {
@@ -55,7 +58,7 @@ int main()
 			this_thread::sleep_until(sleepUntil);
 		}
 
-		if (!snakes[s].next()) {
+		if (died) {
 			if (doDisplay) {
 				bestAteShown = bestAte;
 			}
@@ -137,7 +140,6 @@ void restore()
 		for (int i = 0; i < numSnakes; ++i) {
 			file.read((char*)&snakes[i].brain, sizeof(snakes[i].brain));
 		}
-		file.read((char*)&snakes, sizeof(snakes));
 		file.read((char*)&randGen, sizeof(randGen));
 		file.read((char*)&gen, sizeof(gen));
 		file.close();
@@ -146,7 +148,3 @@ void restore()
 		snakes[i].reset();
 	}
 }
-
-//https://www.youtube.com/watch?v=zIkBYwdkuTk
-//https://towardsdatascience.com/first-neural-network-for-beginners-explained-with-code-4cfd37e06eaf
-//https://medium.com/technology-invention-and-more/how-to-build-a-simple-neural-network-in-9-lines-of-python-code-cc8f23647ca1

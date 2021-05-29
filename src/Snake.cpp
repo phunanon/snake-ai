@@ -1,10 +1,12 @@
 #include "Snake.hpp"
 
+
 Snake::Snake()
 {
     head.x = width / 2;
     head.y = height / 2;
 }
+
 
 void Snake::newFood()
 {
@@ -13,18 +15,6 @@ void Snake::newFood()
     food.y = _rand() % height;
 }
 
-//Returns Vec4 of North/East/South/West distances
-Vec4 cardinalDistances(float x0, float y0, float x1, float y1, float width, float height)
-{
-    auto ns = y0 - y1;
-    auto ew = x0 - x1;
-    return {
-        .a = ns > 0 ? ns / height : 0,
-        .b = ns < 0 ? fabsf(ns / height) : 0,
-        .c = ew > 0 ? ew / width : 0,
-        .d = ew < 0 ? fabsf(ew / width) : 0,
-    };
-}
 
 Inputs<16> Snake::makeInputs()
 {
@@ -47,6 +37,7 @@ Inputs<16> Snake::makeInputs()
         }
     };
 }
+
 
 bool Snake::next()
 {
@@ -95,6 +86,7 @@ bool Snake::next()
 
     return true;
 }
+
 
 Snake Snake::mutant()
 {

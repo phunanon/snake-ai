@@ -74,28 +74,27 @@ struct Layer
 };
 
 template <uint8_t NumInputs, uint8_t NumHidden, uint8_t NumOutputs>
-class Brain
+struct Brain
 {
-    static const uint8_t _numLayers = 4;
-    Layer<0, NumInputs> _inputLayer;
-    Layer<NumInputs, NumHidden> _hiddenLayerA;
-    Layer<NumHidden, NumHidden> _hiddenLayerB;
-    Layer<NumHidden, NumOutputs> _outputLayer;
-public:
+    Layer<0, NumInputs> InputLayer;
+    Layer<NumInputs, NumHidden> HiddenLayerA;
+    Layer<NumHidden, NumHidden> HiddenLayerB;
+    Layer<NumHidden, NumOutputs> OutputLayer;
+
     Outputs<NumOutputs> next(Inputs<NumInputs> inputs)
     {
         for (int i = 0; i < NumInputs; ++i) {
-            _inputLayer.neurons[i].result = inputs.inputs[i];
+            InputLayer.neurons[i].result = inputs.inputs[i];
         }
-        _hiddenLayerA.next(_inputLayer);
-        _hiddenLayerB.next(_hiddenLayerA);
-        _outputLayer.next(_hiddenLayerB);
+        HiddenLayerA.next(InputLayer);
+        HiddenLayerB.next(HiddenLayerA);
+        OutputLayer.next(HiddenLayerB);
         return Outputs<NumOutputs>{
             .output = {
-                _outputLayer.neurons[0].result,
-                _outputLayer.neurons[1].result,
-                _outputLayer.neurons[2].result,
-                _outputLayer.neurons[3].result,
+                OutputLayer.neurons[0].result,
+                OutputLayer.neurons[1].result,
+                OutputLayer.neurons[2].result,
+                OutputLayer.neurons[3].result,
             }
         };
     }
@@ -104,10 +103,10 @@ public:
     {
         Brain copy;
         memcpy(&copy, this, sizeof(Brain));
-        copy._inputLayer.mutate();
-        copy._hiddenLayerA.mutate();
-        copy._hiddenLayerB.mutate();
-        copy._outputLayer.mutate();
+        copy.InputLayer.mutate();
+        copy.HiddenLayerA.mutate();
+        copy.HiddenLayerB.mutate();
+        copy.OutputLayer.mutate();
         return copy;
     }
 };
