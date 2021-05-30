@@ -16,31 +16,30 @@ void Snake::newFood()
 }
 
 
-Inputs<16> Snake::makeInputs()
-{
-    bool isDiag = abs(head.x - food.x) == abs(head.y == food.y);
+Outputs<4> Snake::think() {
+    bool isDiag = abs(head.x - food.x) == abs(head.y - food.y);
     bool noN = !head.y, noE = head.x == width - 1, noS = head.y == height - 1, noW = !head.x;
-    return {
+    Inputs<16> inputs = {
         .inputs = {
             float(noN), float(noE), float(noS), float(noW),
             float(head.x == food.x && head.y > food.y), //Food North
             float(head.x == food.x && head.y < food.y), //Food South
             float(head.y == food.y && head.x > food.x), //Food East
             float(head.y == food.y && head.x < food.x), //Food West
-            float(isDiag && head.x < food.x && head.y < food.y), //Food NW
-            float(isDiag && head.x > food.x && head.y < food.y), //Food NE
-            float(isDiag && head.x < food.x && head.y > food.y), //Food NW
-            float(isDiag && head.x > food.x && head.y > food.y), //Food SE
+            float(isDiag && head.x > food.x && head.y > food.y), //Food NW
+            float(isDiag && head.x < food.x && head.y > food.y), //Food NE
+            float(isDiag && head.x > food.x && head.y < food.y), //Food SW
+            float(isDiag && head.x < food.x && head.y < food.y), //Food SE
         }
     };
+    return brain.next(inputs);
 }
 
 
-bool Snake::next()
+bool Snake::act(Outputs<4> outputs)
 {
     ++age;
     --foodTimeout;
-    auto outputs = brain.next(makeInputs());
     auto [north, east, south, west] = outputs.output;
 
     auto most = max(max(north, east), max(south, west));

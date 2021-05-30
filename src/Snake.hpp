@@ -21,7 +21,6 @@ struct Vec4
 
 class Snake
 {
-    Inputs<16> makeInputs();
     mt19937 _rand;
     void newFood();
 
@@ -36,7 +35,8 @@ public:
     uint32_t ate = 0;
     uint16_t body[height][width] = { 0 };
     Snake();
-    bool next();
+    Outputs<4> think();
+    bool act(Outputs<4>);
     Snake mutant();
     void reset()
     {

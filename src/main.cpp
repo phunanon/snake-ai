@@ -20,15 +20,19 @@ uint16_t s = 0;
 uint16_t gen = 0;
 uint32_t bestAge = 0;
 uint32_t bestAte = 0;
-uint16_t bestAteShown = 0;
-uint32_t genAgeSum = 0;
-uint32_t genAteSum = 0;
-uint32_t numSnaSum = 0;
 
 auto nextCheckpoint = chrono::system_clock::now();
 
 int main()
 {
+	uint16_t bestAteShown = 0;
+	uint32_t genAgeSum = 0;
+	uint32_t genAteSum = 0;
+	uint32_t numSnaSum = 0;
+
+	bool isPaused = false;
+	bool doOneStep = false;
+
 	sf::RenderWindow window(sf::VideoMode(WIN_W, WIN_H), "Breeding"); //, sf::Style::Fullscreen);
 	auto display = Display();
 
@@ -47,11 +51,23 @@ int main()
 				else if (event.key.code == sf::Keyboard::S) {
 					bestAteShown = bestAte;
 				}
+				else if (event.key.code == sf::Keyboard::P) {
+					isPaused = !isPaused;
+					printf(isPaused ? "Paused.\n" : "Resumed.\n");
+				} else if (event.key.code == sf::Keyboard::N) {
+					doOneStep = true;
+				}
 			}
 		}
 		auto sleepUntil = chrono::system_clock::now() + chrono::milliseconds(20);
 
-		bool died = !snakes[s].next();
+		if (isPaused && !doOneStep) {
+			this_thread::sleep_until(sleepUntil);
+			continue;
+		}
+		doOneStep = false;
+
+		auto outputs = snakes[s].think();
 
 		bool doDisplay = !s && bestAteShown != bestAte;
 		if (doDisplay) {
@@ -59,7 +75,7 @@ int main()
 			this_thread::sleep_until(sleepUntil);
 		}
 
-		if (died) {
+		if (!snakes[s].act(outputs)) {
 			if (doDisplay) {
 				bestAteShown = bestAte;
 			}
@@ -77,7 +93,7 @@ int main()
 			if (nextCheckpoint < chrono::system_clock::now()) {
 				nextCheckpoint = chrono::system_clock::now() + chrono::seconds(CheckpointDuration);
 				printf(
-					"#%d %d/%d\tage %.2f\teat %.2f\n",
+					"%05d %d/%d\tage %.2f\teat %.2f\n",
 					gen,
 					bestAge,
 					bestAte,
