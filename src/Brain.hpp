@@ -6,9 +6,6 @@
 #include "global.hpp"
 using namespace std;
 
-float sigmoid(float x);
-float max(float, float);
-
 template <uint8_t Count>
 struct Inputs
 {
@@ -61,7 +58,8 @@ struct Layer
             for (int i = 0; i < NumConnect; ++i) {
                 sum += from.neurons[i].value * neuron->weights[i];
             }
-            neuron->value = sigmoid(sum + neuron->bias);
+            auto x = sum + neuron->bias;
+            neuron->value = x / (1 + fabsf(x));
         }
     }
 

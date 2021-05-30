@@ -9,31 +9,25 @@ using namespace std;
 
 #define WIN_W 625
 #define WIN_H 504
-#define numSnakes 1000
 
 void nextGeneration();
 void save();
 void restore();
-Snake snakes[numSnakes];
+Snake snakes[NumSnakes];
 
 uint16_t s = 0;
 uint16_t gen = 0;
-uint32_t bestAge = 0;
-uint32_t bestAte = 0;
+uint32_t bestAge = 0, bestAte = 0;
 
 auto nextCheckpoint = chrono::system_clock::now();
 
 int main()
 {
 	uint16_t bestAteShown = 0;
-	uint32_t genAgeSum = 0;
-	uint32_t genAteSum = 0;
-	uint32_t numSnaSum = 0;
+	uint32_t genAgeSum = 0, genAteSum = 0, numSnaSum = 0;
+	bool isPaused = false, doOneStep = false;
 
-	bool isPaused = false;
-	bool doOneStep = false;
-
-	sf::RenderWindow window(sf::VideoMode(WIN_W, WIN_H), "Breeding"); //, sf::Style::Fullscreen);
+	sf::RenderWindow window(sf::VideoMode(WIN_W, WIN_H), "Breeding");
 	auto display = Display();
 
 	restore();
@@ -87,7 +81,7 @@ int main()
 			++numSnaSum;
 			++s;
 
-			if (s == numSnakes) {
+			if (s == NumSnakes) {
 				nextGeneration();
 			}
 
@@ -115,7 +109,7 @@ void nextGeneration()
 
 	//Breed the best
 	const int numChild = 49;
-	auto numTop = numSnakes / (numChild + 1);
+	auto numTop = NumSnakes / (numChild + 1);
 	sort(
 		begin(snakes),
 		end(snakes),
@@ -128,7 +122,7 @@ void nextGeneration()
 	}
 
 	//Reset all snakes
-	for (int i = 0; i < numSnakes; ++i) {
+	for (int i = 0; i < NumSnakes; ++i) {
 		snakes[i].reset();
 	}
 }
@@ -137,7 +131,7 @@ void save()
 {
 	fstream file;
 	file.open("snake.brain", ios::out | ios::binary);
-	for (int i = 0; i < numSnakes; ++i) {
+	for (int i = 0; i < NumSnakes; ++i) {
 		file.write((char*)&snakes[i].brain, sizeof(snakes[i].brain));
 	}
 	file.write((char*)&randGen, sizeof(randGen));
@@ -150,14 +144,14 @@ void restore()
 	fstream file;
 	file.open("snake.brain", ios::in | ios::binary);
 	if (file) {
-		for (int i = 0; i < numSnakes; ++i) {
+		for (int i = 0; i < NumSnakes; ++i) {
 			file.read((char*)&snakes[i].brain, sizeof(snakes[i].brain));
 		}
 		file.read((char*)&randGen, sizeof(randGen));
 		file.read((char*)&gen, sizeof(gen));
 		file.close();
 	}
-	for (int i = 0; i < numSnakes; ++i) {
+	for (int i = 0; i < NumSnakes; ++i) {
 		snakes[i].reset();
 	}
 }

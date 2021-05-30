@@ -2,6 +2,7 @@
 #include <random>
 using namespace std;
 
+#define NumSnakes 1000
 #define SnakeWidth 24
 #define SnakeHeight 24
 #define BiasMutateChance 6
