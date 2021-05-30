@@ -16,23 +16,22 @@ void Snake::newFood()
 }
 
 
-Outputs<4> Snake::think() {
-    bool isDiag = abs(head.x - food.x) == abs(head.y - food.y);
+Outputs<4> Snake::think()
+{
     bool noN = !head.y, noE = head.x == width - 1, noS = head.y == height - 1, noW = !head.x;
-    Inputs<16> inputs = {
+    return brain.next({
         .inputs = {
             float(noN), float(noE), float(noS), float(noW),
             float(head.x == food.x && head.y > food.y), //Food North
+            float(head.y == food.y && head.x < food.x), //Food East
             float(head.x == food.x && head.y < food.y), //Food South
-            float(head.y == food.y && head.x > food.x), //Food East
-            float(head.y == food.y && head.x < food.x), //Food West
-            float(isDiag && head.x > food.x && head.y > food.y), //Food NW
-            float(isDiag && head.x < food.x && head.y > food.y), //Food NE
-            float(isDiag && head.x > food.x && head.y < food.y), //Food SW
-            float(isDiag && head.x < food.x && head.y < food.y), //Food SE
+            float(head.y == food.y && head.x > food.x), //Food West
+            float(!noN && body[head.y - 1][head.x]),    //Body North
+            float(!noE && body[head.y][head.x + 1]),    //Body East
+            float(!noS && body[head.y + 1][head.x]),    //Body South
+            float(!noW && body[head.y][head.x - 1]),    //Body West
         }
-    };
-    return brain.next(inputs);
+    });
 }
 
 
@@ -61,8 +60,7 @@ bool Snake::act(Outputs<4> outputs)
         || head.x < 0
         || head.y >= height
         || head.x >= width
-        //|| body[head.y][head.x] //
-        || ate > 1000             // TODO
+        || body[head.y][head.x]
         || !foodTimeout) {
         return false;
     }

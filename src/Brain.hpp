@@ -28,7 +28,7 @@ struct Neuron
 {
     float bias = 1;
     float weights[NumConnections];
-    float result = 0;
+    float value = 0;
     static const uint8_t numConnections = NumConnections;
     Neuron()
     {
@@ -59,9 +59,9 @@ struct Layer
             float sum = 0;
             auto neuron = neurons + h;
             for (int i = 0; i < NumConnect; ++i) {
-                sum += from.neurons[i].result * neuron->weights[i];
+                sum += from.neurons[i].value * neuron->weights[i];
             }
-            neuron->result = sigmoid(sum + neuron->bias);
+            neuron->value = sigmoid(sum + neuron->bias);
         }
     }
 
@@ -84,17 +84,17 @@ struct Brain
     Outputs<NumOutputs> next(Inputs<NumInputs> inputs)
     {
         for (int i = 0; i < NumInputs; ++i) {
-            InputLayer.neurons[i].result = inputs.inputs[i];
+            InputLayer.neurons[i].value = inputs.inputs[i];
         }
         HiddenLayerA.next(InputLayer);
         HiddenLayerB.next(HiddenLayerA);
         OutputLayer.next(HiddenLayerB);
         return Outputs<NumOutputs>{
             .output = {
-                OutputLayer.neurons[0].result,
-                OutputLayer.neurons[1].result,
-                OutputLayer.neurons[2].result,
-                OutputLayer.neurons[3].result,
+                OutputLayer.neurons[0].value,
+                OutputLayer.neurons[1].value,
+                OutputLayer.neurons[2].value,
+                OutputLayer.neurons[3].value,
             }
         };
     }

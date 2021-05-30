@@ -27,10 +27,10 @@ class Snake
 public:
     static const uint8_t width = SnakeWidth;
     static const uint8_t height = SnakeHeight;
-    Brain<16, 16, 4> brain;
+    Brain<12, 12, 4> brain;
     Vec2 head = { .x = width / 2, .y = height / 2 };
     Vec2 food;
-    uint8_t foodTimeout = 0;
+    uint16_t foodTimeout = 0;
     uint32_t age = 0;
     uint32_t ate = 0;
     uint16_t body[height][width] = { 0 };

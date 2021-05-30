@@ -54,7 +54,8 @@ int main()
 				else if (event.key.code == sf::Keyboard::P) {
 					isPaused = !isPaused;
 					printf(isPaused ? "Paused.\n" : "Resumed.\n");
-				} else if (event.key.code == sf::Keyboard::N) {
+				}
+				else if (event.key.code == sf::Keyboard::N) {
 					doOneStep = true;
 				}
 			}
@@ -112,13 +113,13 @@ void nextGeneration()
 	s = 0;
 	++gen;
 
-	//Find top 10% and breed
-	const int numChild = 9;
+	//Breed the best
+	const int numChild = 49;
 	auto numTop = numSnakes / (numChild + 1);
-	sort(begin(snakes), end(snakes), [](const Snake& a, const Snake& b) -> bool
-		{
-			return a.fitness() > b.fitness();
-		});
+	sort(
+		begin(snakes),
+		end(snakes),
+		[](const Snake& a, const Snake& b) { return a.fitness() > b.fitness(); });
 	bestAte = snakes[0].ate;
 	for (int i = 0; i < numTop; ++i) {
 		for (int child = 0; child < numChild; ++child) {
