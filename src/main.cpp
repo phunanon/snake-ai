@@ -2,6 +2,7 @@
 #include <thread>
 #include <chrono>
 #include <fstream>
+#include <algorithm>
 #include "Display.hpp"
 #include "Snake.hpp"
 using namespace std;
@@ -94,26 +95,21 @@ void nextGeneration()
 {
 	s = 0;
 	++gen;
-	//Gradually shift winners left, breeding child to the right per move
-	bestAte = 0;
-	int bestI = 0;
-	for (int i = gen % 2; i < numSnakes - 1; i += 2) {
-		if (snakes[i + 1].ate > snakes[i].ate) {
-			snakes[i] = snakes[i + 1];
-			snakes[i + 1] = snakes[i].mutant();
-			if (snakes[i].ate > bestAte) {
-				bestAte = snakes[i].ate;
-				bestI = i;
-			}
-		} else if (snakes[i + 1].ate < snakes[i].ate) {
-			snakes[i + 1] = snakes[i].mutant();
-		} else if (snakes[i + 1].age >= snakes[i].age) {
-			snakes[i + 1] = snakes[i].mutant();
+
+	//Find top 10% and breed
+	const int numChild = 9;
+	auto numTop = numSnakes / (numChild + 1);
+	sort(begin(snakes), end(snakes), [](const Snake& a, const Snake& b) -> bool
+		{
+			return a.fitness() > b.fitness();
+		});
+	bestAte = snakes[0].ate;
+	for (int i = 0; i < numTop; ++i) {
+		for (int child = 0; child < numChild; ++child) {
+			snakes[numTop + (i * numChild) + child] = snakes[i].mutant();
 		}
 	}
-	//Copy best to the top and bottom
-	snakes[0] = snakes[bestI];
-	snakes[numSnakes - 1] = snakes[bestI];
+
 	//Reset all snakes
 	for (int i = 0; i < numSnakes; ++i) {
 		snakes[i].reset();

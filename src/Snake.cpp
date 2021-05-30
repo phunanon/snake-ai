@@ -19,13 +19,10 @@ void Snake::newFood()
 Inputs<16> Snake::makeInputs()
 {
     bool isDiag = abs(head.x - food.x) == abs(head.y == food.y);
-
+    bool noN = !head.y, noE = head.x == width - 1, noS = head.y == height - 1, noW = !head.x;
     return {
         .inputs = {
-            float(!head.y), //Wall immediately North
-            float(!head.x), //Wall immediately West
-            float(head.y == height - 1), //Wall immediately South
-            float(head.x == width - 1),  //Wall immediately East
+            float(noN), float(noE), float(noS), float(noW),
             float(head.x == food.x && head.y > food.y), //Food North
             float(head.x == food.x && head.y < food.y), //Food South
             float(head.y == food.y && head.x > food.x), //Food East

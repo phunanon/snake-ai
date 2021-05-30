@@ -26,8 +26,8 @@ class Snake
     void newFood();
 
 public:
-    static const uint8_t width = 8;
-    static const uint8_t height = 8;
+    static const uint8_t width = SnakeWidth;
+    static const uint8_t height = SnakeHeight;
     Brain<16, 16, 4> brain;
     Vec2 head = { .x = width / 2, .y = height / 2 };
     Vec2 food;
@@ -46,5 +46,8 @@ public:
         ate = 0;
         memset(body, 0, sizeof(body));
         newFood();
+    }
+    int fitness() const {
+        return age + (ate * FoodTimeout);
     }
 };
