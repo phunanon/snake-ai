@@ -25,7 +25,7 @@ int main()
 	uint32_t genAgeSum = 0, genAteSum = 0, numSnaSum = 0;
 	bool isPaused = false, doOneStep = false;
 
-	sf::RenderWindow window(sf::VideoMode(WIN_W, WIN_H), "Breeding");
+	sf::RenderWindow window(sf::VideoMode(WIN_W, WIN_H), "Snake AI");
 	auto display = Display();
 
 	restore();
