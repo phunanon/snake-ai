@@ -1,5 +1,4 @@
 #include "global.hpp"
-#include <cstdlib>
 
 mt19937 randGen = mt19937(0);
 

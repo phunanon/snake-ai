@@ -4,15 +4,15 @@
 void Snake::newFood()
 {
     foodTimeout = FoodTimeout;
-    food.x = _rand() % width;
-    food.y = _rand() % height;
+    food.x = _rand() % size;
+    food.y = _rand() % size;
 }
 
 
 void Snake::reset()
 {
     _rand = mt19937(1);
-    head = { .x = width / 2, .y = height / 2 };
+    head = { .x = size / 2, .y = size / 2 };
     age = 0;
     ate = 0;
     memset(body, 0, sizeof(body));
@@ -28,7 +28,7 @@ int Snake::fitness() const
 
 Outputs<4> Snake::think()
 {
-    bool noN = !head.y, noE = head.x == width - 1, noS = head.y == height - 1, noW = !head.x;
+    bool noN = !head.y, noE = head.x == size - 1, noS = head.y == size - 1, noW = !head.x;
     return brain.next({
         .inputs = {
             float(noN), float(noE), float(noS), float(noW),
@@ -57,8 +57,8 @@ bool Snake::act(Outputs<4> outputs)
 
     if (head.y < 0
         || head.x < 0
-        || head.y >= height
-        || head.x >= width
+        || head.y >= size
+        || head.x >= size
         || body[head.y][head.x]
         || !foodTimeout) {
         return false;
@@ -69,8 +69,8 @@ bool Snake::act(Outputs<4> outputs)
         ++ate;
     }
 
-    for (int y = 0; y < height; ++y) {
-        for (int x = 0; x < width; ++x) {
+    for (int y = 0; y < size; ++y) {
+        for (int x = 0; x < size; ++x) {
             body[y][x] && --body[y][x];
         }
     }

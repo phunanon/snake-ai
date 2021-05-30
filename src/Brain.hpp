@@ -6,6 +6,7 @@
 #include "global.hpp"
 using namespace std;
 
+
 template <uint8_t Count>
 struct Inputs
 {
@@ -13,12 +14,14 @@ struct Inputs
     static const uint8_t count = Count;
 };
 
+
 template <uint8_t Count>
 struct Outputs
 {
     float output[Count];
     static const uint8_t count = Count;
 };
+
 
 template <uint8_t NumConnections>
 struct Neuron
@@ -41,6 +44,7 @@ struct Neuron
         }
     }
 };
+
 
 template <uint8_t NumConnect, uint8_t Count>
 struct Layer
@@ -70,6 +74,7 @@ struct Layer
         }
     }
 };
+
 
 template <uint8_t NumInputs, uint8_t NumHidden, uint8_t NumOutputs>
 struct Brain

@@ -7,19 +7,17 @@
 #include "Snake.hpp"
 using namespace std;
 
-#define WIN_W 625
-#define WIN_H 504
-
 void nextGeneration();
 void save();
 void restore();
-Snake snakes[NumSnakes];
 
+Snake snakes[NumSnakes];
 uint16_t s = 0;
 uint16_t gen = 0;
 uint32_t bestAge = 0, bestAte = 0;
 
 auto nextCheckpoint = chrono::system_clock::now();
+
 
 int main()
 {
@@ -102,6 +100,7 @@ int main()
 	}
 }
 
+
 void nextGeneration()
 {
 	s = 0;
@@ -127,6 +126,7 @@ void nextGeneration()
 	}
 }
 
+
 void save()
 {
 	fstream file;
@@ -138,6 +138,7 @@ void save()
 	file.write((char*)&gen, sizeof(gen));
 	file.close();
 }
+
 
 void restore()
 {
