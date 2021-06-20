@@ -103,12 +103,12 @@ int main()
 
 void nextGeneration()
 {
-	s = 0;
 	++gen;
 
 	//Breed the best
 	const int numChild = 49;
 	auto numTop = NumSnakes / (numChild + 1);
+	s = numTop;
 	sort(
 		begin(snakes),
 		end(snakes),
